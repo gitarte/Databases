@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+		<title>DES Goolge Like</title>
+        <script src="/static/jquery/jquery-3.1.1.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+        <script>$(document).ready(function(){$("#username").focus();});</script>
+    </head>
+    <body>
+        <div class="login-page">
+            <div class="form">
+                <p><%= msg %></p>
+                <form class="login-form" method="POST" action="/login">
+                    <input id="username" name="username" type="text"     placeholder="username"/>
+                    <input id="password" name="password" type="password" placeholder="password"/>
+                    <button>login</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

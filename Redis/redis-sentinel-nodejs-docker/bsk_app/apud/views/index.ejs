@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+		<title>DES Goolge Like</title>
+		<script src="/static/jquery/jquery-3.1.1.min.js"></script>
+		<script src="/static/jquery/jquery-ui.min.js"></script>
+		<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/static/jquery/jquery-ui.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/jquery/jquery-ui.theme.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/jquery/jquery-ui.structure.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap-theme.min.css">
+		<script>
+			$(document).ready(function(){
+				setInterval(function(){ location.reload(); }, 3000);
+			});
+		</script>
+	    </head>
+	<body>
+		<div class="container">
+			<div class="panel panel-primary">
+				<div class="panel-heading">Nazwa serwera</div>
+				<div class="panel-body"> <%= hostname %> </div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading">Dane</div>
+				<div class="panel-body">
+					<table class="small table table-striped table-condensed">
+					  	<thead>
+							<tr>
+								<th>time</th>
+								<th>src</th>
+								<th>dst</th>
+								<th>title</th>
+								<th>value</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% data.forEach(function(row) { %>
+								<tr>
+									<td><%= row.time  %></td>
+									<td><%= row.src   %></td>
+									<td><%= row.dst   %></td>
+									<td><%= row.title %></td>
+									<td><%= row.value %></td>
+								</tr>
+							<% }); %>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "apud",
+  "version": "0.0.0",
+  "description": "Basic usage of Expres.JS Redis Sentinel as Docker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./bin/index.js"
+  },
+  "author": "Artur Gawroński",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.1.2",
+    "body-parser": "^1.15.2",
+    "cassandra-driver": "^3.1.6",
+    "connect-redis": "^3.1.0",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "ioredis": "^2.4.0",
+    "mongodb": "^2.2.11",
+    "redis": "^2.6.3"
+  }
+}
