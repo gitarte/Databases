@@ -7,10 +7,9 @@ systemctl start  postgresql
 ```
 ### Edit /var/lib/pgsql/data/pg_hba.conf
 ```bash
-local   all             all                                     peer
-# IPv4 local connections:
-host    all             all             192.168.43.0/24         md5
-host    all             all             127.0.0.1/32            md5
+local   all   all                     peer
+host    all   all   192.168.43.0/24   md5
+host    all   all   127.0.0.1/32      md5
 ```
 ### Edit /var/lib/pgsql/data/postgresql.conf
 ```bash
