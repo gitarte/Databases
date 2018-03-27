@@ -1,0 +1,103 @@
+### Overview
+This cheet-sheet shows how to create an environment for IBM's Informix Innovator-C Edition. 
+
+### The script
+```bash
+# CONFIGURATION
+INFORMIXSERVER="myinstance"
+INFORMIXVERSION="12.10.FC9IE.linux-x86_64"
+INFORMIXINSTALLFILE="iif.12.10.FC9IE.linux-x86_64.tar"
+INFORMIXDIR="/opt/IBM/informix" 
+INFORMIXVERSIONDIR="/opt/IBM/informix_"$INFORMIXVERSION
+INFORMIXDATADIR="/idsdata"
+INFORMIXINSTALLDIR="/root/ids_install"
+ONCONFIG="onconfig.$INFORMIXSERVER"
+INFORMIXSQLHOST="$INFORMIXDIR/etc/sqlhosts"
+DB_LOCALE="pl_PL.UTF-8"
+CLIENT_LOCALE=$DB_LOCALE
+SERVER_LOCALE=$DB_LOCALE
+GL_USEGLU=1
+MYPATH='$PATH'":$INFORMIXDIR/bin"
+
+# CREATE INFIRMIX ENVIRONMENT
+groupadd informix
+useradd -g informix -m informix
+mkdir   -p $INFORMIXVERSIONDIR
+mkdir   -p $INFORMIXDATADIR
+ln      -s $INFORMIXVERSIONDIR $INFORMIXDIR
+touch $INFORMIXDATADIR/rootdbs
+touch $INFORMIXDATADIR/logdbs
+touch $INFORMIXDATADIR/tmpdbs
+touch $INFORMIXDATADIR/datadbs
+
+# CREATE BASH PROFILE FOR INFORMIX
+cp  /home/informix/.bash_profile /home/informix/.bash_profile_cp
+cat /home/informix/.bash_profile_cp | grep -v "export PATH" > /home/informix/.bash_profile
+rm  /home/informix/.bash_profile_cp
+cat << EOF >> /home/informix/.bash_profile
+INFORMIXDATADIR=$INFORMIXDATADIR
+INFORMIXINSTALLDIR=$INFORMIXINSTALLDIR
+INFORMIXINSTALLFILE=$INFORMIXINSTALLFILE
+INFORMIXDIR=$INFORMIXDIR
+INFORMIXSERVER=$INFORMIXSERVER
+ONCONFIG=$ONCONFIG
+INFORMIXSQLHOST=$INFORMIXSQLHOST
+INFORMIXTERM=$INFORMIXTERM
+DB_LOCALE=$DB_LOCALE
+CLIENT_LOCALE=$CLIENT_LOCALE
+SERVER_LOCALE=$SERVER_LOCALE
+GL_USEGLU=$GL_USEGLU
+PATH=$MYPATH
+export PATH INFORMIXDIR INFORMIXDATADIR INFORMIXSERVER ONCONFIG INFORMIXSQLHOSTS DB_LOCALE CLIENT_LOCALE SERVER_LOCALE GL_USEGLU INFORMIXINSTALLDIR INFORMIXINSTALLFILE
+EOF
+
+# LAUNCHING INSTALL SCRIPT
+mkdir -p $INFORMIXINSTALLDIR
+cp  /root/$INFORMIXINSTALLFILE $INFORMIXINSTALLDIR/
+cd  $INFORMIXINSTALLDIR
+tar xvf $INFORMIXINSTALLFILE 1>/dev/null
+./ids_install
+
+# SETUP sqlhosts FILE
+cat  $INFORMIXDIR/etc/sqlhosts.std | grep -v "demo_on" >  $INFORMIXDIR/etc/sqlhosts
+cat << EOF >> $INFORMIXDIR/etc/sqlhosts
+${INFORMIXSERVER}     onipcshm ${HOSTNAME} sqlexec
+${INFORMIXSERVER}_tcp onsoctcp ${HOSTNAME} sqlexec
+EOF
+
+# SETUP ONCONFIG FILE
+cat  $INFORMIXDIR/etc/onconfig.std \
+| grep -v "^ROOTPATH" \
+| grep -v "^DBSERVERNAME" \
+| grep -v "^DBSERVERALIASES" \
+| grep -v "^LTAPEDEV" \
+>  $INFORMIXDIR/etc/$ONCONFIG
+cat << EOF >> $INFORMIXDIR/etc/$ONCONFIG
+ROOTPATH        ${INFORMIXDATADIR}/rootdbs
+DBSERVERNAME    ${INFORMIXSERVER}
+DBSERVERALIASES ${INFORMIXSERVER}_tcp
+LTAPEDEV        /dev/null
+EOF
+
+# ENSURE THE OWNERSIP
+chown -R informix:informix $INFORMIXVERSIONDIR
+chown -R informix:informix $INFORMIXDATADIR
+chown -R informix:informix $INFORMIXINSTALLDIR
+chmod -R 770 $INFORMIXVERSIONDIR
+chmod -R 770 $INFORMIXINSTALLDIR
+chmod -R 770 $INFORMIXDATADIR
+chmod    660 $INFORMIXDATADIR/*dbs
+
+# FINAL TOUCH AS
+sudo -u informix bash << EOF
+oninit -ivy
+onspaces -c -d logdbs  -o 0 -s 200000    -p $INFORMIXDATADIR/logdbs
+onspaces -c -d tmpdbs  -o 0 -s 200000 -t -p $INFORMIXDATADIR/tmpdbs
+onspaces -c -d datadbs -o 0 -s 500000    -p $INFORMIXDATADIR/datadbs
+onmode -kuy
+oninit -vy
+# Create a sample database
+dbaccessdemo
+EOF
+
+```
